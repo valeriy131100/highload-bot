@@ -67,25 +67,29 @@ def show_poll_start_keyboard(bot, chat_id, finished_poll):
     )
 
 
-def show_rebus(bot, chat_id, current_rebus, description=''):
+def show_rebus(bot, chat_id, current_rebus: Rebus, description=''):
     reply_markup = ReplyKeyboardMarkup(
         [['❓ Получить подсказку'], ['✖ Закончить игру']],
         one_time_keyboard=False, row_width=1, resize_keyboard=True
     )
 
-    if requests.get(current_rebus.image.url).ok:
-        # for production server
-        bot.send_photo(
-            chat_id=chat_id, photo=current_rebus.image.url, reply_markup=reply_markup,
-            caption=' '.join([item for item in (current_rebus.text, description) if item])
-        )
-    else:
-        # for localhost
-        with open(current_rebus.image.path, 'rb') as image:
+    try:
+        if requests.get(current_rebus.image.url).ok:
+            # for production server
             bot.send_photo(
-                chat_id=chat_id, photo=image, reply_markup=reply_markup,
+                chat_id=chat_id, photo=current_rebus.image.url, reply_markup=reply_markup,
                 caption=' '.join([item for item in (current_rebus.text, description) if item])
             )
+            return
+    except requests.exceptions.InvalidURL:
+        pass
+
+    # for localhost
+    with open(current_rebus.image.path, 'rb') as image:
+        bot.send_photo(
+            chat_id=chat_id, photo=image, reply_markup=reply_markup,
+            caption=' '.join([item for item in (current_rebus.text, description) if item])
+        )
 
 
 def show_hint(bot, chat_id, current_rebus, description=''):
