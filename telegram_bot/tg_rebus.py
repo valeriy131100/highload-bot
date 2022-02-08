@@ -51,7 +51,10 @@ TYPE_COMPETITION = {'is_rebus': 'РЕБУС', 'is_poll': 'ОПРОС'}
 
 def get_user(func):
     def wrapper(update, context):
-        chat_id = update.message.chat_id
+        if update.poll_answer:
+            chat_id = update.poll_answer.user.id
+        else:
+            chat_id = update.message.chat_id
         user, _ = Player.objects.get_or_create(telegram_id=chat_id)
         context.user_data['user'] = user
         return func(update, context)
