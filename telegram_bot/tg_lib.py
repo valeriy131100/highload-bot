@@ -76,7 +76,7 @@ def show_rebus(bot, chat_id, current_rebus, description=''):
     if requests.get(current_rebus.image.url).ok:
         # for production server
         bot.send_photo(
-            chat_id=chat_id, photo=image.url, reply_markup=reply_markup,
+            chat_id=chat_id, photo=current_rebus.image.url, reply_markup=reply_markup,
             caption=' '.join([item for item in (current_rebus.text, description) if item])
         )
     else:
