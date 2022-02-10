@@ -73,7 +73,7 @@ def show_rebus(bot, chat_id, current_rebus: Rebus, description=''):
         one_time_keyboard=False, row_width=1, resize_keyboard=True
     )
 
-    try:
+    if current_rebus.image.url.startswith('http'):
         if requests.get(current_rebus.image.url).ok:
             # for production server
             bot.send_photo(
@@ -81,8 +81,6 @@ def show_rebus(bot, chat_id, current_rebus: Rebus, description=''):
                 caption=' '.join([item for item in (current_rebus.text, description) if item])
             )
             return
-    except requests.exceptions.InvalidURL:
-        pass
 
     # for localhost
     with open(current_rebus.image.path, 'rb') as image:
