@@ -259,6 +259,9 @@ def start_rebus(bot, chat_id, context):
     current_rebus = user_data['current_rebus']
     if current_rebus and user_data['successful_attempts'] < int(MAX_PUZZLES_TO_WIN):
         start_jobs(chat_id, show_rebus_reminder, context, name='show_rebus_reminder')
+        if RebusAttempt.objects.filter(rebus=current_rebus, success=True):
+            current_rebus = Rebus.objects.fresh(user).next()
+            user_data['current_rebus'] = current_rebus
         user_data['current_rebus_is_guessed'] = False
         help_message = 'ℹ️ Отгадайте и введите слово на картинке. Если затрудняетесь, нажмите "Получить подсказку" ℹ️'
         show_rebus(bot, chat_id, current_rebus, help_message)
